@@ -76,12 +76,11 @@ class WeightedSampler(RandomSampler):
     def get_probability_map_image(self, subject: Subject) -> Image:
         if self.probability_map_name in subject:
             return subject[self.probability_map_name]
-        else:
-            message = (
-                f'Image "{self.probability_map_name}"'
-                f' not found in subject: {subject}'
-            )
-            raise KeyError(message)
+        message = (
+            f'Image "{self.probability_map_name}"'
+            f' not found in subject: {subject}'
+        )
+        raise KeyError(message)
 
     def get_probability_map(self, subject: Subject) -> torch.Tensor:
         data = self.get_probability_map_image(subject).data
@@ -168,8 +167,7 @@ class WeightedSampler(RandomSampler):
         """Return the cumulative distribution function of a probability map."""
         flat_map = probability_map.flatten()
         flat_map_normalized = flat_map / flat_map.sum()
-        cdf = np.cumsum(flat_map_normalized)
-        return cdf
+        return np.cumsum(flat_map_normalized)
 
     def extract_patch(
             self,
@@ -178,8 +176,7 @@ class WeightedSampler(RandomSampler):
             cdf: np.ndarray
             ) -> Subject:
         index_ini = self.get_random_index_ini(probability_map, cdf)
-        cropped_subject = self.crop(subject, index_ini, self.patch_size)
-        return cropped_subject
+        return self.crop(subject, index_ini, self.patch_size)
 
     def get_random_index_ini(
             self,
